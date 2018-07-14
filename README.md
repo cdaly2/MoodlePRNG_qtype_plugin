@@ -85,3 +85,6 @@ by directly accessing the urls.
    to directly access the answer.
    Debugging of these questions is currently not trivial. This should be fixed.
    Maybe use a Python web framework such as Flask as the cgi solution uses more resources.
+   
+   Moodle also knows the number of attempts that a student has taken at a question. It may be that useful to
+   consider the number of attempts when deciding how much feedback to give to a student.
