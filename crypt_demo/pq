@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+
+import cgitb
+cgitb.enable()
+import cgi
+import os
+import sys
+import random
+
+def print_text(text):
+   print("Content-Type: text/plain\r\n\r\n", end = "")
+
+   print(text, end="")
+   sys.stdout.flush()
+
+def e404():
+   print('Status: 404 Not Found\r\n\r\n', end="")
+
+def parse_uri(uri):
+   # Assume that the uri ends with pq/cmd/sid_cid
+   parts = uri.split('/')
+   if len(parts) < 3 and parts[-3] != 'pq':
+      print_text("Error, uri should have pq as third last part!")
+      return []
+
+   cmd = parts[-2]
+   if len(parts[-1].split('_')) != 2:
+      return []
+   else:
+      sid, cid = [int(s) for s in parts[-1].split('_')]
+      
+      return cmd, sid, cid
+
+# This will define the question (choose a plaintext and a key)
+def gen_vals(seed):
+   if False:
+      # Debug ... use a simple question ... lower case letters
+      return [1, 'abcdefghijklmnopqrstuvwxyz']
+   else:
+      random.seed(seed)
+
+      plaintexts = [
+         'semper fidelis',
+         'attack at dawn',
+         'top secret',
+         'keep your tongue',
+         ]
+
+      # Choose one for the question
+      plaintext = plaintexts[random.randint(0, len(plaintexts) - 1)]
+      
+      # Now, choose a key
+      key = random.randint(1, 25)
+      return [key, plaintext]
+
+def gen_spec(rand_vals):
+   key, plaintext = rand_vals
+   return "Perform a Caesar cypher on the plaintext '{}' using the key {:d} and enter the result in the box below.".format(plaintext, key)
+
+def encode(c, key):
+   # Only encode lower case letters
+   if c.islower():
+      new_c = ord(c) + key # Add the key
+      if new_c > ord('z'): # Gone off the end ...
+         new_c -= ord('z') - ord('a') + 1 # ... wrap around
+      return chr(new_c)
+   else:
+      return c # not lower case, leave
+
+def caesar(key, plaintext):
+   encrypted = ''
+   for c in plaintext:
+      encrypted += encode(c, key)
+   return encrypted
+   
+def gen_answer(rand_vals):
+   key, plaintext = rand_vals
+   return caesar(key, plaintext)
+
+# Mark the response
+def gen_mark(rand_vals, response):
+   if response == gen_answer(rand_vals):
+      return "1\nWell done, {} is the correct answer".format(response)
+   elif response.lower() == gen_answer(rand_vals).lower():
+      return "0.5\nYour solution is correct except for the case of the letters."
+   else:
+      # Provide some feedback on an incorrect answer.
+      if len(response) != len(gen_answer(rand_vals)):
+         return "0\n{} is not correct.\n There should be {:d} characters in your response".format(response, len(gen_answer(rand_vals)))
+      else:
+         # Check if they encrypted using an incorrect key
+         key, plaintext = rand_vals
+         student_key = ord(response[0]) - ord(plaintext[0]) # work out the shift for the first letter
+         if caesar(student_key, plaintext) == response:
+            return "0.25\nYou correctly encrypted the plaintext, but you used the wrong key ({:d})".format(student_key)
+         else:
+            return "0\n{} is not correct".format(response)
+         
+
+def main():
+   try:
+      student_answer = None
+      if "REQUEST_URI" in os.environ:
+         uri = os.environ["REQUEST_URI"]
+      else:
+         # Run on the command line? ... let's give it a value (debugging is easier on the command line
+         uri = '/pycgi/question/top/Defaultfortest/test_cat/cat2/CDSA/pq/mark/2_2?resp=0'
+         student_answer = '?resp=0'
+
+      path = uri.split('?')[0]
+      #print_text(path)
+      parsed = parse_uri(path)
+      
+      if len(parsed) != 3:
+         print_text("Error: {} not parsed properly".format(uri))
+      else:
+         cmd, sid, cid = parsed
+         # print_text("cmd = {}, sid = {:d}, cid = {:d}".format(cmd, sid, cid))
+
+         # We have parsed the uri and now have the command, sid and cid.
+         seed = sid * 3 + 1000 * cid # Create the seed
+         rand_vals = gen_vals(seed)  # Get the parameters of the question
+
+         # Now respond with either the specification, answer or mark.
+         if cmd == 'spec':
+            print_text(gen_spec(rand_vals))
+         elif cmd == 'ans':
+            print_text( str(gen_answer(rand_vals)) )
+         elif cmd == 'mark':
+            if student_answer == None:
+               student_answer = cgi.FieldStorage().getvalue("resp")
+            #print_text("Student Answer = {}".format(student_answer))
+            if student_answer == None:
+               print_text( "There is no student response (required for marking)" )
+            else:
+               print_text( str(gen_mark(rand_vals, student_answer)) )
+         else:
+            print_text("Unknown command (spec/ans)")
+
+   except :
+      e404()
+
+if __name__ == "__main__":
+   main()
+
