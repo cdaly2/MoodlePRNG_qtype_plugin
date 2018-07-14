@@ -44,7 +44,8 @@ The plugin was installed on a Vanilla Ubuntu 18.04 server with Moodle version 20
       WWWROOT/pycgi/question/top/Defaultfortest/crypt_demo/
    Ensure that the python program pq is in this directory.
 
-3. Enable cgi for the directory pycgi.
+3. Enable cgi for the directory pycgi/.
+   You will need to modify apache2.conf, run 'sudo a2enmod cgi' and restart apache.
 
 4. You can test this, by going to the url directly (you will probably need to change the hostname):
       http://192.168.56.101/pycgi/question/top/Defaultfortest/crypt_demo/pq
