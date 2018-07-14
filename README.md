@@ -70,3 +70,15 @@ This was installed on a Vanilla Ubuntu 18.04 server with Moodle version 20180517
 
 Obviously, as currently implemented, it would be easy for students to find the question and the answer.
    The Python program should be adapted to ignore all queries that don't come from a Moodle question page.
+   
+   TODO
+   ====
+   Fix the PHP qtype plugin so that it looks like normal code.
+   It should allow the user to modify the directory of the url and the size of the answer box. It should not require the user to enter a text description or to supply any answers (which will be ignored anyway).
+   I assume that many parts of the showrtanswer plugin are irrelevant and can be removed.
+   
+   The Python code should be adapted so that it inherits functionality from a super class.
+   It should refuse connections that don't come from the Moodle quiz page as that might allow students
+   to directly access the answer.
+   Debugging of these questions is currently not trivial. This should be fixed.
+   Maybe use a Python web framework such as Flask as the cgi solution uses more resources.
