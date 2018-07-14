@@ -13,7 +13,7 @@ This plugin is very experimental. It works for me but caveat emptor.
 Rational
 ========
 Moodle is very powerful but it is also complex and it is programmed in PHP which I don't happen to like.
-However, I wanted to be able to create programmable questions and I developed a simple interface to
+However, I wanted to be able to create programmable questions and I developed an interface to
 allow me to do this.
 
 I do this by developing a simple protocol to generate a question specification (i.e. the question text)
@@ -25,11 +25,12 @@ I hacked the shortanswer qtype plugin and I took over three items of functionali
 3. When a question is being marked, I take the response and forward it to the url to mark the response.
 
 The code that sits behind these urls can be in pretty much any programming language.
-The language that I use in the example here happens to be Python, but it doesn't need to be.
+The language that I use in the example here happens to be Python. The code is explained in the
+forum post above.
 
 Installation
 ============
-This was installed on a Vanilla Ubuntu 18.04 server with Moodle version 2018051701.00
+The plugin was installed on a Vanilla Ubuntu 18.04 server with Moodle version 2018051701.00
 
 1. Take the code in the cdsa directory and add it to moodle/question/type/.
    Logging in as moodle admin, you will be asked to install the new plugin. Install it.
@@ -63,12 +64,13 @@ This was installed on a Vanilla Ubuntu 18.04 server with Moodle version 20180517
       http://192.168.56.101/pycgi/question/top/Defaultfortest/crypt_demo/pq/mark/2_2?resp=keep+your+tongue
 
 4. Now, back at Moodle, create a quiz, add a cdsa question, and set the name to be crypt_demo. You will
-  need to create one answer with a mark of 100% but that answer will be ignored (this plugin is experimental).
+  need to create one answer with a mark of 100% but that answer will be ignored (this plugin is a hack).
    Assuming that you can access the Python program through the urls, the cdsa plugin should also be able to
-   access the urls. The only problem might be some incorrect directories. If you turn on developer debugging,
-   You will see which directory that cdsa expects to find the question.
+   access the urls. The only problem might be some incorrect directories. If there is a problem,
+   turn on developer debugging, and you will see which directory that cdsa expects to find the question.
 
-Obviously, as currently implemented, it would be easy for students to find the question and the answer.
+Obviously, as currently implemented, it would be easy for students to find the question and the answer
+by directly accessing the urls.
    The Python program should be adapted to ignore all queries that don't come from a Moodle question page.
    
    TODO
