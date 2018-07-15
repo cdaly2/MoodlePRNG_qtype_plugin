@@ -76,15 +76,20 @@ by directly accessing the urls.
    
    TODO
    ====
-   Fix the PHP qtype plugin so that it looks like normal code.
-   It should allow the user to modify the directory of the url and the size of the answer box. It should not require the user to enter a text description or to supply any answers (which will be ignored anyway).
-   I assume that many parts of the showrtanswer plugin are irrelevant and can be removed.
+   PHP code
+   1. Fix the PHP qtype plugin so that it looks like normal code.
+   2. It should allow the user to modify the directory of the url and the size of the answer box.
+   3. It should not require the user to enter a text description or to supply any answers (which will be ignored anyway).
+   4. I assume that many parts of the showrtanswer plugin are irrelevant and can be removed.
    
-   The Python code should be adapted so that it inherits functionality from a super class.
-   It should refuse connections that don't come from the Moodle quiz page as that might allow students
+   Python Code
+   1. The Python code should be adapted so that it inherits functionality from a super class.
+   2. It should refuse connections that don't come from the Moodle quiz page as that might allow students
    to directly access the answer.
-   Debugging of these questions is currently not trivial. This should be fixed.
-   Maybe use a Python web framework such as Flask as the cgi solution uses more resources.
+   3. Debugging of these questions is currently not trivial. This should be fixed.
+   4. Maybe use a Python web framework such as Flask as the cgi solution uses more resources.
    
-   Moodle also knows the number of attempts that a student has taken at a question. It may be that useful to
+   5. Moodle knows the number of attempts that a student has taken at a question. It may be that useful to
    consider the number of attempts when deciding how much feedback to give to a student.
+   6. Maybe pass information about the student to the question generating software. That way the question
+   itself could be adapted to the ability of the student.
